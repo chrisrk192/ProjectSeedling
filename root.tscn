@@ -1,0 +1,38 @@
+[gd_scene load_steps=4 format=3 uid="uid://cku6bnkcbqwmr"]
+
+[ext_resource type="Script" path="res://root.gd" id="1_sfedq"]
+[ext_resource type="PackedScene" uid="uid://bn2qlxuo33bgy" path="res://player_window.tscn" id="2_iohgv"]
+[ext_resource type="Script" path="res://chat.gd" id="3_5sq7k"]
+
+[node name="Root" type="Node2D"]
+script = ExtResource("1_sfedq")
+ai_window = ExtResource("2_iohgv")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="PanelContainer" type="PanelContainer" parent="CanvasLayer" node_paths=PackedStringArray("userData", "chatText")]
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("3_5sq7k")
+userData = NodePath("VBoxContainer/TextEdit")
+chatText = NodePath("VBoxContainer/ScrollContainer/RichTextLabel")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/PanelContainer"]
+layout_mode = 2
+
+[node name="ScrollContainer" type="ScrollContainer" parent="CanvasLayer/PanelContainer/VBoxContainer"]
+custom_minimum_size = Vector2(300, 300)
+layout_mode = 2
+
+[node name="RichTextLabel" type="RichTextLabel" parent="CanvasLayer/PanelContainer/VBoxContainer/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+text = "this is a test"
+
+[node name="TextEdit" type="TextEdit" parent="CanvasLayer/PanelContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+placeholder_text = "this ia a test"
+
+[node name="HTTPRequest" type="HTTPRequest" parent="CanvasLayer/PanelContainer"]

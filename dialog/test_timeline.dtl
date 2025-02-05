@@ -1,0 +1,8 @@
+ai: this is a test
+ai: this is another text
+- What shoud I do? | [T1="T1.1" T2="T2.2"]
+- Hi
+- YO
+ai: That was a good choice. now here is some long text for you to parse through. I guess I should increase the length of this sentance some more here.
+ai: That was a good choice. now here is some long text for you to parse through. I guess I should increase the length of this sentance some more here.That was a good choice. now here is some long text for you to parse through. I guess I should increase the length of this sentance some more here.
+ai: That was a good choice. now here is some long text for you to parse through. I guess I should increase the length of this sentance some more here.That was a good choice. now here is some long text for you to parse through. I guess I should increase the length of this sentance some more here.That was a good choice. now here is some long text for you to parse through. I guess I should increase the length of this sentance some more here.
