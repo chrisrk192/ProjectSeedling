@@ -4,9 +4,10 @@
 [ext_resource type="PackedScene" uid="uid://bn2qlxuo33bgy" path="res://player_window.tscn" id="2_iohgv"]
 [ext_resource type="Script" path="res://chat.gd" id="3_5sq7k"]
 
-[node name="Root" type="Node2D"]
+[node name="Root" type="Node2D" node_paths=PackedStringArray("chat_interface")]
 script = ExtResource("1_sfedq")
 ai_window = ExtResource("2_iohgv")
+chat_interface = NodePath("CanvasLayer/PanelContainer")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
@@ -36,3 +37,5 @@ layout_mode = 2
 placeholder_text = "this ia a test"
 
 [node name="HTTPRequest" type="HTTPRequest" parent="CanvasLayer/PanelContainer"]
+
+[connection signal="token_recieved" from="CanvasLayer/PanelContainer" to="." method="_on_panel_container_token_recieved"]

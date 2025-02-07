@@ -1,3 +1,4 @@
+class_name Player
 extends Sprite2D
 
 signal boundry_updated(new_size: Vector2)
@@ -18,22 +19,51 @@ func showText(timeline_string) -> void:
 	text_bubble = Dialogic.start(timeline_string)
 	add_child(text_bubble)
 	
-func showCustomText(text: String) -> void:
+	
+var timeline: DialogicTimeline = DialogicTimeline.new()
+var events: Array = []
+
+func addTextToCurrentLine(text: String) -> void:
+	if(events.size() == 0):
+		addCustomText(text)
+	else:
+		timeline.events[timeline.events.size()-1].text += text
+		timeline.process();
+
+func addCustomText(text: String) -> void:
+	#Dialogic.timeline_ended.connect(_on_timeline_ended)
+	#var layout = Dialogic.Styles.load_style("text_bubble_style")
+	#layout.register_character(load("res://dialog/ai.dch"), $".")
+	
+	if(events.size() == 0):
+		startShowCustomText()
+		timeline.events[0].text = text
+	else:
+		# Create a TextEvent
+		var text_event = DialogicTextEvent.new()
+		text_event.text = text
+		text_event.character = load("res://dialog/ai.dch")
+		timeline.events.append(text_event)
+	# Assign events to the timeline
+	#timeline.events = events
+	timeline.events_processed = true  # Necessary if events are already resources
+	timeline.process();
+	#text_bubble = Dialogic.start(timeline)
+	#add_child(text_bubble)
+	
+func startShowCustomText() -> void:
 	Dialogic.timeline_ended.connect(_on_timeline_ended)
 	var layout = Dialogic.Styles.load_style("text_bubble_style")
 	layout.register_character(load("res://dialog/ai.dch"), $".")
+	timeline = DialogicTimeline.new()
+	events = []
 	
-	
-	
-	var events: Array = []
-	# Create a TextEvent
 	var text_event = DialogicTextEvent.new()
-	text_event.text = text
+	text_event.text = "..."
 	text_event.character = load("res://dialog/ai.dch")
 	events.append(text_event)
-
+	
 	# Assign events to the timeline
-	var timeline: DialogicTimeline = DialogicTimeline.new()
 	timeline.events = events
 	timeline.events_processed = true  # Necessary if events are already resources
 	text_bubble = Dialogic.start(timeline)
@@ -42,6 +72,7 @@ func showCustomText(text: String) -> void:
 func _on_timeline_ended() -> void:
 	print("_on_timeline_ended")
 	text_bubble = null
+	events = []
 	var new_size = Vector2(0, 0)
 	emit_signal("boundry_updated", new_size)
 	

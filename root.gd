@@ -1,7 +1,7 @@
 extends Node2D
 
 @export var ai_window: PackedScene
-
+@export var chat_interface: Chat 
 #@onready var _MainCamera: Camera2D = get_node(main_camera)
 @onready var _MainWindow: Window = get_window()
 @onready var _MainScreen: int = _MainWindow.current_screen
@@ -9,7 +9,7 @@ extends Node2D
 
 var world_offset: = Vector2i.ZERO
 
-var ai_window_instance: Window
+var ai_window_instance: PlayerWindow
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:	
 	# display->window->transparent has to be set to true in the project setting, in IDE´s Menu "Project->Project Settings...",
@@ -33,8 +33,8 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	pass
 	
-func create_ai_window() -> Window:
-	var new_window: Window = ai_window.instantiate()
+func create_ai_window() -> PlayerWindow:
+	var new_window: PlayerWindow = ai_window.instantiate()
 	# Pass the main window's world to the new window
 	# This is what makes it possible to show the same world in multiple windows
 	#new_window.world_2d = _MainWindow.world_2d
@@ -53,3 +53,38 @@ func create_ai_window() -> Window:
 	
 	add_child(new_window)
 	return new_window
+
+var buffer: String = ""
+var in_action: bool = false  # Track whether we're inside an action (*...*)
+
+func parse_token(token: String):
+	for char in token:
+		if char == "*":
+			if in_action:
+				# Exiting action mode
+				buffer += "*"
+				dispatch_message(buffer)
+				buffer = ""
+				in_action = false
+			else:
+				# Entering action mode
+				if buffer.strip_edges():  # Dispatch normal text before starting an action
+					dispatch_message(buffer)
+					buffer = ""
+				buffer += "*"
+				in_action = true
+			continue
+		
+		buffer += char
+	
+	# Dispatch a normal sentence if it ends with a period and we're not in an action
+	if not in_action and (buffer.ends_with(".") or buffer.ends_with("?")):
+		dispatch_message(buffer)
+		buffer = ""
+		
+func dispatch_message(buffer):
+	ai_window_instance.say(buffer)
+	
+func _on_panel_container_token_recieved(token: String) -> void:
+	parse_token(token)
+	

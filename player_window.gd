@@ -1,6 +1,7 @@
+class_name PlayerWindow
 extends Window
 
-@onready var player_sprite: Sprite2D = $Player_Sprite
+@onready var player_sprite: Player = $Player_Sprite
 @onready var _MainWindow: Window = get_window()
 var _window_id
 #@onready var char_sprite: AnimatedSprite2D = $Character/AnimatedSprite2D
@@ -36,8 +37,15 @@ func _ready():
 	_window_id = _MainWindow.get_window_id()
 	#Places the character in the middle of the screen and on top of the taskbar
 	_MainWindow.position = Vector2i(DisplayServer.screen_get_size().x/2 - (player_size.x/2), taskbar_pos)
-	player_sprite.showText('test_timeline')
-	#player_sprite.showCustomText("魔法陣")
+	#player_sprite.showText('test_timeline')
+	
+	#player_sprite.addCustomText("私は魔法の猫です")
+	#player_sprite.addCustomText("Message 2 ")
+	#player_sprite.addTextToCurrentLine("魔法陣")
+	
+	print(Dialogic.current_timeline_events)
+	#Dialogic.current_timeline
+	
 
 func _process(delta):
 	check_for_selection() #checks for selection
@@ -176,3 +184,5 @@ func _on_player_sprite_boundry_updated(new_size: Vector2) -> void:
 	_modulatedX = new_size.x
 	_modulatedY = new_size.y
 	
+func say(token: String):
+	player_sprite.addCustomText(token)

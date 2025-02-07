@@ -1,3 +1,4 @@
+class_name Chat
 extends PanelContainer
 
 @export var url = "http://127.0.0.1:11434/api/generate"
@@ -9,6 +10,7 @@ var http = HTTPClient.new()
 
 func _ready() -> void:
 	chatData.model = "llama3.2"
+	chatData.system = "You're a cat. Don't repeat the same cat-like action too often"
 	chatData.prompt = "Hello there llama!"
 	chatData.stream = true
 	# Connect to the host
@@ -28,8 +30,8 @@ func _ready() -> void:
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("send"):
 		chatData.prompt = userData.text
+		chatText.text += "\n" + userData.text + "\n"
 		userData.text = ""
-		chatText.text += "\n"
 		# Send the request
 		var request_body = JSON.stringify(chatData.to_dict())
 		var err = http.request(HTTPClient.METHOD_POST, "/api/generate", headers, request_body)
@@ -52,7 +54,11 @@ func _input(event: InputEvent) -> void:
 				await get_tree().process_frame
 			else:
 				response_data += chunk
-				chatText.text += JSON.parse_string(chunk.get_string_from_utf8())["response"]
+				var response_text: String = JSON.parse_string(chunk.get_string_from_utf8())["response"]
+				if(response_text.contains("\n")):
+					print("new paragraph")
+				chatText.text += response_text
+				token_recieved.emit(response_text)
 		# Process the complete response
 		#var response_text = response_data.get_string_from_utf8()
 		#print(response_text)
@@ -61,3 +67,5 @@ func _input(event: InputEvent) -> void:
 			#chatText.text += json.result["response"]
 		#else:
 			#print("Failed to parse JSON response.")
+			
+signal token_recieved(String)
